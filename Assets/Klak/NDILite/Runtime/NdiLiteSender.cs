@@ -1,11 +1,14 @@
-﻿using System;
+﻿// NDILiteSenderPlugin - NDI send-only plugin for Unity
+// https://github.com/keijiro/NDILiteSenderPlugin
+
+using System;
 using System.Collections;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
 namespace Klak.NdiLite
 {
-    public class NdiSenderLite : MonoBehaviour
+    public class NdiLiteSender : MonoBehaviour
     {
         #region Source texture
 

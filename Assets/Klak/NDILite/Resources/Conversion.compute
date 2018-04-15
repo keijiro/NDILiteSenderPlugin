@@ -1,4 +1,7 @@
-﻿#pragma kernel CSMain
+﻿// NDILiteSenderPlugin - NDI send-only plugin for Unity
+// https://github.com/keijiro/NDILiteSenderPlugin
+
+#pragma kernel CSMain
 
 Texture2D<half4> Source;
 RWBuffer<uint> Destination;
