@@ -1,6 +1,8 @@
 NDI Lite Sender Plugin
 ======================
 
+![gif](https://i.imgur.com/nEYNkrV.gif)
+
 This is an lightweight implementation of NDI™ plugin for Unity iOS.
 
 This plugin has some limitation compared to the [full implementation] of the
