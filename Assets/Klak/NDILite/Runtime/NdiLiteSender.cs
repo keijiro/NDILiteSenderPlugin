@@ -37,7 +37,8 @@ namespace Klak.NdiLite
         [SerializeField, HideInInspector] ComputeShader _compute;
 
         ComputeBuffer _conversionBuffer;
-        int _sourceWidth;
+        int _bufferWidth;
+        int _bufferHeight;
         IntPtr _plugin;
 
         #endregion
@@ -97,8 +98,8 @@ namespace Klak.NdiLite
                 var gch = GCHandle.Alloc(data, GCHandleType.Pinned);
                 NDI_SendFrame(
                     _plugin, gch.AddrOfPinnedObject(),
-                    _sourceWidth, _conversionBuffer.count * 2 / _sourceWidth,
-                    FourCC.UYVY
+                    _sourceTexture.width, _sourceTexture.height,
+                    _alphaSupport ? FourCC.UYVA : FourCC.UYVY
                 );
                 gch.Free();
             }
@@ -121,13 +122,13 @@ namespace Klak.NdiLite
 
         void Update()
         {
-            if (_sourceTexture == null) return;
+            if (_sourceTexture == null || !_sourceTexture.IsCreated()) return;
 
-            _sourceWidth = _sourceTexture.width;
-            var size = _sourceWidth / 2 * _sourceTexture.height;
+            var w = _sourceTexture.width / 2;
+            var h = _sourceTexture.height * (_alphaSupport ? 3 : 2) / 2;
 
             // Dispose the conversion buffer if it can't be reused.
-            if (_conversionBuffer != null && _conversionBuffer.count != size)
+            if (_conversionBuffer != null && _conversionBuffer.count != w * h)
             {
                 _conversionBuffer.Dispose();
                 _conversionBuffer = null;
@@ -135,12 +136,19 @@ namespace Klak.NdiLite
 
             // Conversion buffer allocation
             if (_conversionBuffer == null)
-                _conversionBuffer = new ComputeBuffer(size, 4);
+                _conversionBuffer = new ComputeBuffer(w * h, 4);
 
             // Invoke the compute.
             _compute.SetTexture(0, "Source", _sourceTexture);
             _compute.SetBuffer(0, "Destination", _conversionBuffer);
-            _compute.Dispatch(0, _sourceWidth / 16, _sourceTexture.height / 8, 1);
+            _compute.Dispatch(0, w / 8, _sourceTexture.height / 8, 1);
+
+            if (_alphaSupport)
+            {
+                _compute.SetTexture(1, "Source", _sourceTexture);
+                _compute.SetBuffer(1, "Destination", _conversionBuffer);
+                _compute.Dispatch(1, w / 16, _sourceTexture.height / 8, 1);
+            }
         }
 
         #endregion

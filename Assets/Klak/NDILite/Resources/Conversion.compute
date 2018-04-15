@@ -1,7 +1,8 @@
 ﻿// NDILiteSenderPlugin - NDI send-only plugin for Unity
 // https://github.com/keijiro/NDILiteSenderPlugin
 
-#pragma kernel CSMain
+#pragma kernel ConversionUYVY
+#pragma kernel AppendAlpha
 
 Texture2D<half4> Source;
 RWBuffer<uint> Destination;
@@ -22,9 +23,8 @@ half3 RGB2YUV(half3 rgb)
 }
 
 [numthreads(8, 8, 1)]
-void CSMain(uint3 id : SV_DispatchThreadID)
+void ConversionUYVY(uint3 id : SV_DispatchThreadID)
 {
-
     uint2 p1 = id.xy * uint2(2, 1);
     uint2 p2 = p1 + uint2(1, 0);
 
@@ -40,4 +40,21 @@ void CSMain(uint3 id : SV_DispatchThreadID)
     uint w, h;
     Source.GetDimensions(w, h);
     Destination[(h - 1 - id.y) * (w / 2) + id.x] = packed;
+}
+
+[numthreads(8, 8, 1)]
+void AppendAlpha(uint3 id : SV_DispatchThreadID)
+{
+    uint2 p1 = id.xy * uint2(4, 1);
+
+    uint a1 = saturate(Source[p1 + uint2(0, 0)].a) * 255;
+    uint a2 = saturate(Source[p1 + uint2(1, 0)].a) * 255;
+    uint a3 = saturate(Source[p1 + uint2(2, 0)].a) * 255;
+    uint a4 = saturate(Source[p1 + uint2(3, 0)].a) * 255;
+
+    uint packed = a1 + (a2 << 8) + (a3 << 16) + (a4 << 24);
+
+    uint w, h;
+    Source.GetDimensions(w, h);
+    Destination[w / 2 * h + (h - 1 - id.y) * (w / 4) + id.x] = packed;
 }
