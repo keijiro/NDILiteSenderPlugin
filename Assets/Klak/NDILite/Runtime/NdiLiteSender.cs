@@ -51,16 +51,22 @@ namespace Klak.NdiLite
             UYVA = 0x41565955
         }
 
-        [DllImport("__Internal")]
+        #if !UNITY_EDITOR && UNITY_IOS
+        const string _dllName = "__Internal";
+        #else
+        const string _dllName = "NDILiteSender";
+        #endif
+
+        [DllImport(_dllName)]
         public static extern IntPtr NDI_CreateSender(string name);
 
-        [DllImport("__Internal")]
+        [DllImport(_dllName)]
         public static extern void NDI_DestroySender(IntPtr sender);
 
-        [DllImport("__Internal")]
+        [DllImport(_dllName)]
         public static extern void NDI_SendFrame(IntPtr sender, IntPtr data, int width, int height, FourCC fourCC);
 
-        [DllImport("__Internal")]
+        [DllImport(_dllName)]
         public static extern void NDI_SyncSender(IntPtr sender);
 
         #endregion

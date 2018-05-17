@@ -11,6 +11,8 @@ Desktop.ini
 *.csproj
 *.sln
 *.swp
+xcuserdata
+xcshareddata
 
 # Unity
 /Library
