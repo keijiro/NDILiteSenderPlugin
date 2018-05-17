@@ -3,8 +3,11 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 
 namespace Klak.NdiLite
 {
@@ -36,7 +39,7 @@ namespace Klak.NdiLite
 
         [SerializeField, HideInInspector] ComputeShader _compute;
 
-        ComputeBuffer _conversionBuffer;
+        Queue<ReadbackBuffer> _readbackQueue = new Queue<ReadbackBuffer>();
         int _bufferWidth;
         int _bufferHeight;
         IntPtr _plugin;
@@ -73,52 +76,20 @@ namespace Klak.NdiLite
 
         #region MonoBehaviour implementation
 
-        IEnumerator Start()
+        void OnDisable()
         {
-            // Plugin initialization
-            _plugin = NDI_CreateSender(gameObject.name);
-
-            // Local variables only used in this coroutine.
-            var wait = new WaitForEndOfFrame();
-            var data = (Color32[])null;
-
-            while (true)
+            // Dispose all the readback requests in the queue.
+            while (_readbackQueue.Count > 0)
             {
-                // Wait for the end of the frame.
-                yield return wait;
-
-                // Do nothing if there is no conversion yet.
-                if (_conversionBuffer == null) continue;
-
-                // Wait for the plugin to complete the previous frame.
-                NDI_SyncSender(_plugin);
-
-                // (Re)allocate the data buffer if it can't be reused.
-                if (data == null || data.Length != _conversionBuffer.count)
-                    data = new Color32[_conversionBuffer.count];
-
-                // Request compute buffer readback.
-                _conversionBuffer.GetData(data);
-
-                // Get the pointer to the data buffer, and give it to the plugin.
-                var gch = GCHandle.Alloc(data, GCHandleType.Pinned);
-                NDI_SendFrame(
-                    _plugin, gch.AddrOfPinnedObject(),
-                    _sourceTexture.width, _sourceTexture.height,
-                    _alphaSupport ? FourCC.UYVA : FourCC.UYVY
-                );
-                gch.Free();
+                var buffer = _readbackQueue.Dequeue();
+                buffer.Source.Dispose();
+                buffer.Dispose();
             }
         }
 
-        void OnDisable()
+        void Start()
         {
-            // Compute buffers should be disposed in OnDisable, not OnDestroy.
-            if (_conversionBuffer != null)
-            {
-                _conversionBuffer.Dispose();
-                _conversionBuffer = null;
-            }
+            _plugin = NDI_CreateSender(gameObject.name);
         }
 
         void OnDestroy()
@@ -126,35 +97,57 @@ namespace Klak.NdiLite
             NDI_DestroySender(_plugin);
         }
 
-        void Update()
+        unsafe void Update()
         {
             if (_sourceTexture == null || !_sourceTexture.IsCreated()) return;
 
             var w = _sourceTexture.width / 2;
             var h = _sourceTexture.height * (_alphaSupport ? 3 : 2) / 2;
 
-            // Dispose the conversion buffer if it can't be reused.
-            if (_conversionBuffer != null && _conversionBuffer.count != w * h)
+            ReadbackBuffer buffer = null;
+
+            if (_readbackQueue.Count > 0 && _readbackQueue.Peek().IsCompleted)
             {
-                _conversionBuffer.Dispose();
-                _conversionBuffer = null;
+                buffer = _readbackQueue.Dequeue();
+
+                // Wait for the plugin to complete the previous frame.
+                NDI_SyncSender(_plugin);
+
+                // Get the pointer to the data buffer, and give it to the plugin.
+                NDI_SendFrame(
+                    _plugin, (IntPtr)buffer.Data.GetUnsafePtr(),
+                    _sourceTexture.width, _sourceTexture.height,
+                    _alphaSupport ? FourCC.UYVA : FourCC.UYVY
+                );
+
+                // Dispose the buffer if it can't be reused.
+                if (buffer.Source.count != w * h)
+                {
+                    NDI_SyncSender(_plugin); // Wait before disposing.
+                    buffer.Dispose();
+                    buffer = null;
+                }
             }
 
-            // Conversion buffer allocation
-            if (_conversionBuffer == null)
-                _conversionBuffer = new ComputeBuffer(w * h, 4);
+            // Readback buffer allocation
+            if (buffer == null)
+                buffer = new ReadbackBuffer(new ComputeBuffer(w * h, 4));
 
             // Invoke the compute.
             _compute.SetTexture(0, "Source", _sourceTexture);
-            _compute.SetBuffer(0, "Destination", _conversionBuffer);
+            _compute.SetBuffer(0, "Destination", buffer.Source);
             _compute.Dispatch(0, w / 8, _sourceTexture.height / 8, 1);
 
             if (_alphaSupport)
             {
                 _compute.SetTexture(1, "Source", _sourceTexture);
-                _compute.SetBuffer(1, "Destination", _conversionBuffer);
+                _compute.SetBuffer(1, "Destination", buffer.Source);
                 _compute.Dispatch(1, w / 16, _sourceTexture.height / 8, 1);
             }
+
+            // Push to the readback queue.
+            buffer.RequestReadback();
+            _readbackQueue.Enqueue(buffer);
         }
 
         #endregion

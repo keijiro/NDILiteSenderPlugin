@@ -7,11 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0FE1E63020AD5C300041B6D8 /* CopyBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FE1E62F20AD5C300041B6D8 /* CopyBuffer.m */; };
 		0FE633D020AD4C9D00CE0AA5 /* NDISender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE633CF20AD4C9C00CE0AA5 /* NDISender.cpp */; };
 		0FE633D320AD4D5C00CE0AA5 /* libndi.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE633D220AD4D5C00CE0AA5 /* libndi.3.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F23769E20AD5E4B00273ED1 /* IUnityInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IUnityInterface.h; sourceTree = "<group>"; };
+		0F23769F20AD5E4B00273ED1 /* IUnityGraphics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IUnityGraphics.h; sourceTree = "<group>"; };
+		0F2376A020AD5E4B00273ED1 /* IUnityGraphicsMetal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IUnityGraphicsMetal.h; sourceTree = "<group>"; };
+		0FE1E62F20AD5C300041B6D8 /* CopyBuffer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CopyBuffer.m; sourceTree = "<group>"; };
 		0FE633C620AD4C4B00CE0AA5 /* NDILiteSender.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NDILiteSender.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FE633C920AD4C4B00CE0AA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FE633CF20AD4C9C00CE0AA5 /* NDISender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NDISender.cpp; sourceTree = "<group>"; };
@@ -30,9 +35,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0F23769D20AD5E4B00273ED1 /* Unity */ = {
+			isa = PBXGroup;
+			children = (
+				0F23769E20AD5E4B00273ED1 /* IUnityInterface.h */,
+				0F23769F20AD5E4B00273ED1 /* IUnityGraphics.h */,
+				0F2376A020AD5E4B00273ED1 /* IUnityGraphicsMetal.h */,
+			);
+			path = Unity;
+			sourceTree = "<group>";
+		};
 		0FE633BD20AD4C4B00CE0AA5 = {
 			isa = PBXGroup;
 			children = (
+				0F23769D20AD5E4B00273ED1 /* Unity */,
+				0FE1E62F20AD5C300041B6D8 /* CopyBuffer.m */,
 				0FE633CF20AD4C9C00CE0AA5 /* NDISender.cpp */,
 				0FE633C920AD4C4B00CE0AA5 /* Info.plist */,
 				0FE633C720AD4C4B00CE0AA5 /* Products */,
@@ -122,6 +139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0FE1E63020AD5C300041B6D8 /* CopyBuffer.m in Sources */,
 				0FE633D020AD4C9D00CE0AA5 /* NDISender.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
