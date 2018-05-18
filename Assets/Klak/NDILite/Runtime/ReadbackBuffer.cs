@@ -76,6 +76,10 @@ namespace Klak.NdiLite
 
             if (disposing)
             {
+                // Synchronize with the memcpy tasks before disposing the resources.
+                CopyBuffer_WaitTasks();
+
+                // Dispose all the unmanaged resources.
                 _readBuffer.Dispose();
                 _copyArgs.Free();
                 _copyCommand.Dispose();
@@ -104,6 +108,9 @@ namespace Klak.NdiLite
 
         [DllImport(_dllName)]
         static extern IntPtr CopyBuffer_GetCallback();
+
+        [DllImport(_dllName)]
+        static extern void CopyBuffer_WaitTasks();
 
         #endregion
     }

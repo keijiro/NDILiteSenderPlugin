@@ -8,19 +8,19 @@ extern void UnityPluginUnload(void);
 
 #pragma mark - App controller subclasssing
 
-@interface MyAppController : UnityAppController
+@interface CustomAppController : UnityAppController
 {
 }
 - (void)shouldAttachRenderDelegate;
 @end
 
-@implementation MyAppController
+@implementation CustomAppController
 - (void)shouldAttachRenderDelegate;
 {
     UnityRegisterRenderingPluginV5(&UnityPluginLoad, &UnityPluginUnload);
 }
 @end
 
-IMPL_APP_CONTROLLER_SUBCLASS(MyAppController);
+IMPL_APP_CONTROLLER_SUBCLASS(CustomAppController);
 
 #endif
