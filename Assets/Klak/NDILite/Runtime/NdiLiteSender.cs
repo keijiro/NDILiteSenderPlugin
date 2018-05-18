@@ -40,9 +40,14 @@ namespace Klak.NdiLite
         [SerializeField, HideInInspector] ComputeShader _compute;
 
         Queue<ReadbackBuffer> _readbackQueue = new Queue<ReadbackBuffer>();
-        int _bufferWidth;
-        int _bufferHeight;
+        ReadbackBuffer _sending;
         IntPtr _plugin;
+
+        void DisposeBuffer(ReadbackBuffer buffer)
+        {
+            buffer.Source.Dispose();
+            buffer.Dispose();
+        }
 
         #endregion
 
@@ -78,13 +83,16 @@ namespace Klak.NdiLite
 
         void OnDisable()
         {
+            // Sync with the sender and dispose the frame.
+            if (_sending != null)
+            {
+                NDI_SyncSender(_plugin);
+                DisposeBuffer(_sending);
+            }
+
             // Dispose all the readback requests in the queue.
             while (_readbackQueue.Count > 0)
-            {
-                var buffer = _readbackQueue.Dequeue();
-                buffer.Source.Dispose();
-                buffer.Dispose();
-            }
+                DisposeBuffer(_readbackQueue.Dequeue());
         }
 
         void Start()
@@ -108,24 +116,27 @@ namespace Klak.NdiLite
 
             if (_readbackQueue.Count > 0 && _readbackQueue.Peek().IsCompleted)
             {
-                buffer = _readbackQueue.Dequeue();
+                buffer = _sending;
+                _sending = _readbackQueue.Dequeue();
 
                 // Wait for the plugin to complete the previous frame.
                 NDI_SyncSender(_plugin);
 
                 // Get the pointer to the data buffer, and give it to the plugin.
                 NDI_SendFrame(
-                    _plugin, (IntPtr)buffer.Data.GetUnsafePtr(),
+                    _plugin, (IntPtr)_sending.Data.GetUnsafePtr(),
                     _sourceTexture.width, _sourceTexture.height,
                     _alphaSupport ? FourCC.UYVA : FourCC.UYVY
                 );
 
+                NDI_SyncSender(_plugin);
+
                 // Dispose the buffer if it can't be reused.
-                if (buffer.Source.count != w * h)
+                if (_sending.Source.count != w * h)
                 {
                     NDI_SyncSender(_plugin); // Wait before disposing.
-                    buffer.Dispose();
-                    buffer = null;
+                    DisposeBuffer(_sending);
+                    _sending = null;
                 }
             }
 
