@@ -20,7 +20,7 @@
 		0FE633C620AD4C4B00CE0AA5 /* NDILiteSender.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NDILiteSender.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FE633C920AD4C4B00CE0AA5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FE633CF20AD4C9C00CE0AA5 /* NDISender.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NDISender.cpp; sourceTree = "<group>"; };
-		0FE633D220AD4D5C00CE0AA5 /* libndi.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libndi.3.dylib; path = "../../../../NewTek NDI SDK/lib/x64/libndi.3.dylib"; sourceTree = "<group>"; };
+		0FE633D220AD4D5C00CE0AA5 /* libndi.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libndi.3.dylib; path = "/NewTek NDI SDK/lib/x64/libndi.3.dylib"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
