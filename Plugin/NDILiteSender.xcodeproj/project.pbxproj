@@ -10,7 +10,21 @@
 		0FE1E63020AD5C300041B6D8 /* CopyBuffer.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FE1E62F20AD5C300041B6D8 /* CopyBuffer.m */; };
 		0FE633D020AD4C9D00CE0AA5 /* NDISender.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0FE633CF20AD4C9C00CE0AA5 /* NDISender.cpp */; };
 		0FE633D320AD4D5C00CE0AA5 /* libndi.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 0FE633D220AD4D5C00CE0AA5 /* libndi.3.dylib */; };
+		0FFC002B20B04AD2005E5044 /* libndi.3.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0FE633D220AD4D5C00CE0AA5 /* libndi.3.dylib */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		0FFC002A20B04AC7005E5044 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				0FFC002B20B04AD2005E5044 /* libndi.3.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0F23769E20AD5E4B00273ED1 /* IUnityInterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IUnityInterface.h; sourceTree = "<group>"; };
@@ -83,6 +97,7 @@
 				0FE633C220AD4C4B00CE0AA5 /* Sources */,
 				0FE633C320AD4C4B00CE0AA5 /* Frameworks */,
 				0FE633C420AD4C4B00CE0AA5 /* Resources */,
+				0FFC002A20B04AC7005E5044 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -264,6 +279,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.keijiro.NDILiteSender;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -277,6 +293,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Bundles";
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = jp.keijiro.NDILiteSender;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
