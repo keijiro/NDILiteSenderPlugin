@@ -1,4 +1,5 @@
 #include <cstdint>
+#include <stddef.h>
 #include <Processing.NDI.Lib.h>
 #include <TargetConditionals.h>
 

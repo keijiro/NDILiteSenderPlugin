@@ -16,4 +16,6 @@ xcshareddata
 
 # Unity
 /Library
+/Logs
 /Temp
+/UserSettings

@@ -15,7 +15,7 @@ namespace Klak.NdiLite
     {
         #region Source texture
 
-        [SerializeField] RenderTexture _sourceTexture;
+        [SerializeField] RenderTexture _sourceTexture = null;
 
         public RenderTexture sourceTexture {
             get { return _sourceTexture; }
@@ -26,7 +26,7 @@ namespace Klak.NdiLite
 
         #region Format option
 
-        [SerializeField] bool _alphaSupport;
+        [SerializeField] bool _alphaSupport = false;
 
         public bool alphaSupport {
             get { return _alphaSupport; }
@@ -37,7 +37,7 @@ namespace Klak.NdiLite
 
         #region Private members
 
-        [SerializeField, HideInInspector] ComputeShader _compute;
+        [SerializeField, HideInInspector] ComputeShader _compute = null;
 
         Queue<ReadbackBuffer> _readbackQueue = new Queue<ReadbackBuffer>();
         ReadbackBuffer _sending;
