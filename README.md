@@ -1,3 +1,9 @@
+**NOTE**: This project is obsolete. The same sender functionality was added
+to the KlakNDI plugin. See the project page for details.
+
+https://github.com/keijiro/KlakNDI
+
+
 NDI Lite Sender Plugin
 ======================
 
